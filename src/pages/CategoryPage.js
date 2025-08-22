@@ -1,46 +1,59 @@
-import React, { useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchMealsByCategory } from "../features/restaurants/restaurantsSlice";
-import MealCard from "../components/MealCard";
-import SkeletonCard from "../components/SkeletonCard";
-import ErrorMessage from "../components/ErrorMessage";
+// src/pages/CategoryPage.js
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../features/cart/cartSlice";
+// ❌ import Footer from "../components/Footer";
 
 export default function CategoryPage() {
-  const { name = "" } = useParams();
+  const { id } = useParams();
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const dispatch = useDispatch();
-  const { menusByCategory, statusMeals, errorMeals } = useSelector((s) => s.restaurants);
-  const meals = menusByCategory[name] || [];
 
   useEffect(() => {
-    if (!meals.length) {
-      dispatch(fetchMealsByCategory(name));
-    }
-  }, [name, meals.length, dispatch]);
+    const fetchItems = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(`http://localhost:5000/api/restaurants/${id}/items`);
+        const data = await res.json();
+        setItems(Array.isArray(data.items) ? data.items : []);
+        setError(null);
+      } catch {
+        setError("Erreur lors de la récupération des plats");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchItems();
+  }, [id]);
+
+  const handleAdd = (item) => {
+    dispatch(addToCart({
+      id: item.itemID,
+      name: item.itemName,
+      price: item.itemPrice,
+      imageUrl: item.imageUrl,
+      quantity: 1
+    }));
+  };
+
+  if (loading) return <p>Chargement...</p>;
+  if (error) return <p>{error}</p>;
+  if (items.length === 0) return <p>Aucun plat disponible</p>;
 
   return (
-    <div>
-      <div className="row" style={{ justifyContent: "space-between", marginBottom: 12 }}>
-        <h2>Menu — {name}</h2>
-        <Link to="/" className="link">← Retour</Link>
-      </div>
-
-      {statusMeals === "loading" && <SkeletonCard count={6} />}
-
-      {statusMeals === "failed" && (
-        <ErrorMessage
-          message={errorMeals || "Menu indisponible."}
-          onRetry={() => dispatch(fetchMealsByCategory(name))}
-        />
-      )}
-
-      {statusMeals !== "loading" && !meals.length && (
-        <ErrorMessage message="Aucun plat dans cette catégorie." />
-      )}
-
-      <div className="grid">
-        {meals.map((m) => (
-          <MealCard key={m.id} meal={m} />
+    <div style={{ minHeight: "80vh" }}>
+      <div className="items-container">
+        {items.map(item => (
+          <div key={item.itemID} className="meal-card">
+            <img src={item.imageUrl} alt={item.itemName} />
+            <h4>{item.itemName}</h4>
+            <p>{item.itemDescription}</p>
+            <p>{item.itemPrice} MAD</p>
+            <button className="add-btn" onClick={() => handleAdd(item)}>Ajouter au panier</button>
+          </div>
         ))}
       </div>
     </div>
