@@ -1,25 +1,23 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
 import CategoryPage from "./pages/CategoryPage";
-import Cart from "./pages/Cart";
+import CartPage from "./pages/Cart";
 
-export default function App() {
+function App() {
   return (
-    <Router>
-      <div className="container">
-        <Navbar />
-        <main className="main">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/category/:name" element={<CategoryPage />} />
-            <Route path="/cart" element={<Cart />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
-    </Router>
+    <>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/restaurants/:id" element={<CategoryPage />} />
+        <Route path="/cart" element={<CartPage />} />
+      </Routes>
+      <Footer />
+    </>
   );
 }
+
+export default App;

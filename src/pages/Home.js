@@ -1,40 +1,71 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchCategories } from "../features/restaurants/restaurantsSlice";
-import CategoryCard from "../components/CategoryCard";
-import SkeletonCard from "../components/SkeletonCard";
-import ErrorMessage from "../components/ErrorMessage";
+// src/pages/Home.js
+import React, { useEffect, useState } from "react";
+import Restaurants from "../components/Restaurants";
+import Hero from "../components/Hero";
 
 export default function Home() {
-  const dispatch = useDispatch();
-  const { categories, statusCategories, errorCategories } = useSelector((s) => s.restaurants);
+  const [restaurants, setRestaurants] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (statusCategories === "idle") {
-      dispatch(fetchCategories());
-    }
-  }, [statusCategories, dispatch]);
+    const fetchRestaurants = async () => {
+      try {
+        setLoading(true);
 
-  if (statusCategories === "loading") return <SkeletonCard count={6} />;
+        // Récupération des restaurants depuis l'API locale
+        const res = await fetch("http://localhost:5000/api/restaurants");
+        const data = await res.json();
 
-  if (statusCategories === "failed") {
-    return (
-      <ErrorMessage
-        message={errorCategories || "Erreur de chargement"}
-        onRetry={() => dispatch(fetchCategories())}
-      />
-    );
-  }
+        const unsplashKey = "UgodCb_7c157O2KY0xCZvm3ZHszVroqtOhNRoAEHJK4"; // ta Access Key Unsplash
 
-  if (!categories.length) {
-    return <ErrorMessage message="Aucun restaurant disponible." />;
-  }
+        // On mappe chaque restaurant et on récupère une image depuis Unsplash
+        const mapped = await Promise.all(
+          data.map(async r => {
+            // Recherche d'une image correspondant au restaurant
+            const imgRes = await fetch(
+              `https://api.unsplash.com/search/photos?query=restaurant,${encodeURIComponent(r.restaurantName)}&per_page=1&client_id=${unsplashKey}`
+            );
+            const imgData = await imgRes.json();
+
+            return {
+              id: r.restaurantID,
+              name: r.restaurantName,
+              address: r.restaurantAddress,
+              phone: r.restaurantPhone,
+              imageUrl: imgData.results[0]?.urls?.small || "fallback-image.jpg"
+            };
+          })
+        );
+
+        setRestaurants(mapped);
+        setError(null);
+      } catch (err) {
+        setError("Erreur lors de la récupération des restaurants");
+        console.error("Erreur de récupération : ", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRestaurants();
+  }, []);
 
   return (
-    <div className="grid">
-      {categories.map((c) => (
-        <CategoryCard key={c.id} category={c} />
-      ))}
+    <div>
+      <Hero />
+
+      {loading && (
+        <p style={{ textAlign: "center", marginTop: "20px" }}>
+          Chargement des restaurants...
+        </p>
+      )}
+
+      {error && (
+        <p style={{ textAlign: "center", marginTop: "20px" }}>{error}</p>
+      )}
+
+      {!loading && !error && <Restaurants restaurants={restaurants} />}
     </div>
   );
 }

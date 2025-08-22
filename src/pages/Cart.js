@@ -1,49 +1,63 @@
+// src/pages/CartPage.js
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { changeQty, clearCart, removeFromCart } from "../features/cart/cartSlice";
+import { clearCart, removeFromCart, incrementQty, decrementQty } from "../features/cart/cartSlice";
+import { Plus, Minus, Trash2 } from "lucide-react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "../styles/global.css"; // Assure-toi que c'est importé
 
-export default function Cart() {
+export default function CartPage() {
+  const items = useSelector((state) => state.cart.items);
   const dispatch = useDispatch();
-  const items = Object.values(useSelector((s) => s.cart.items));
-  const total = items.reduce((sum, it) => sum + it.price * it.qty, 0);
 
-  if (!items.length) return <p>Votre panier est vide.</p>;
+  const total = items.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+  const handleOrder = () => {
+    toast.success("✅ Votre commande a été passée avec succès !");
+    dispatch(clearCart());
+  };
+
+  if (items.length === 0)
+    return <p className="empty-cart">Votre panier est vide.</p>;
 
   return (
-    <div>
-      <h2>Panier</h2>
-      <ul className="list">
-        {items.map((it) => (
-          <li key={it.id} className="list-item">
-            <div className="row">
-              <img src={it.image} alt={it.name} className="thumb" />
-              <div>
-                <div className="bold">{it.name}</div>
-                <div className="muted">{it.price} MAD</div>
-              </div>
+    <div className="cart-page">
+      <h2 className="cart-title">🛒 Votre panier</h2>
+
+      <div className="cart-items">
+        {items.map((item) => (
+          <div key={item.id} className="cart-item">
+            <div>
+              <h3 className="cart-item-name">{item.name}</h3>
+              <p className="cart-item-price">{item.price} MAD</p>
             </div>
-            <div className="row">
-              <input
-                type="number"
-                min={1}
-                value={it.qty}
-                onChange={(e) => dispatch(changeQty({ id: it.id, qty: Number(e.target.value) }))}
-                className="qty"
-              />
-              <button className="btn-outline" onClick={() => dispatch(removeFromCart(it.id))}>
-                Supprimer
+
+            <div className="cart-item-controls">
+              <button onClick={() => dispatch(decrementQty(item.id))} className="cart-btn">
+                <Minus className="icon-small" />
+              </button>
+              <span className="cart-qty">{item.qty}</span>
+              <button onClick={() => dispatch(incrementQty(item.id))} className="cart-btn">
+                <Plus className="icon-small" />
+              </button>
+              <button onClick={() => dispatch(removeFromCart(item.id))} className="cart-btn remove">
+                <Trash2 className="icon-small" />
               </button>
             </div>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
 
-      <div className="row" style={{ justifyContent: "space-between", marginTop: 12 }}>
-        <strong>Total: {total.toFixed(2)} MAD</strong>
-        <div className="row" style={{ gap: 8 }}>
-          <button className="btn" onClick={() => alert("Commande passée !")}>Commander</button>
-          <button className="btn-danger" onClick={() => dispatch(clearCart())}>Vider</button>
-        </div>
+      <div className="cart-total">Total : {total} MAD</div>
+
+      <div className="cart-footer">
+        <button onClick={() => dispatch(clearCart())} className="cart-action-btn clear">
+          Vider le panier
+        </button>
+        <button onClick={handleOrder} className="cart-action-btn order">
+          Commander
+        </button>
       </div>
     </div>
   );
