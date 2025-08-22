@@ -1,70 +1,108 @@
-# Getting Started with Create React App
+# FoodieApp
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+FoodieApp est une application de commande de repas en ligne développée en React, qui permet aux utilisateurs de découvrir des restaurants, consulter leurs menus et passer commande. L'application utilise Redux pour gérer l'état global et consomme des données depuis une API externe.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## 📝 Contexte du projet
 
-### `npm start`
+FoodieApp vise à offrir une expérience fluide et responsive aux utilisateurs, avec :
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- La liste des restaurants récupérée via une API externe.
+- La possibilité de consulter les menus détaillés des restaurants.
+- Un panier interactif mis à jour en temps réel.
+- Une gestion des erreurs et des états de chargement pour une expérience utilisateur optimale.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## 🎯 Objectifs
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Développer une application React avec gestion d'état globale (Redux).
+- Consommer des données via une API externe avec gestion d'erreurs.
+- Créer une interface simple, responsive et performante.
+- Optimiser l'affichage et les composants pour une expérience fluide même avec beaucoup de données.
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 👤 User Stories
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- En tant qu’utilisateur, je veux voir la liste des restaurants récupérée depuis une API.
+- En tant qu’utilisateur, je souhaite cliquer sur un restaurant pour voir son menu détaillé.
+- En tant qu’utilisateur, je veux ajouter des plats à mon panier et voir le panier mis à jour en temps réel.
+- En tant qu’utilisateur, je veux être informé en cas d’erreur (connexion, API indisponible, données manquantes).
+- En tant qu’utilisateur, je souhaite une application rapide et fluide, même avec beaucoup de données.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+## 🖌️ Design
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- Interface simple et responsive.
+- Mise en avant des cartes de restaurants et menus.
+- Messages clairs en cas d’erreur ou d’absence de données.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 📂 Structure
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- **Page d’accueil (`/`)** : Liste des restaurants récupérés via l’API.
+- **Page restaurant (`/restaurants/:id`)** : Détail du restaurant et liste des plats disponibles.
+- **Page panier (`/cart`)** : Articles ajoutés, possibilité de modifier quantité ou supprimer des plats.
+- **Gestion d’erreurs** : Affichage de messages lorsque les requêtes échouent ou que le menu est vide.
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## ⚙️ Fonctionnalités
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+**Gestion d’état global avec Redux :**
 
-### Code Splitting
+- Liste des restaurants.
+- Panier (ajout, suppression, mise à jour des quantités).
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+**Consommation d’API :**
 
-### Analyzing the Bundle Size
+- fetch + async/await
+- Gestion des promises : États `loading`, `success`, `error`.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+**Debugging :**
 
-### Making a Progressive Web App
+- Utilisation de `console.log`, React DevTools et Redux DevTools.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+**Optimisation :**
 
-### Advanced Configuration
+- Séparation des composants.
+- Chargement conditionnel avec `React.memo`.
+- Animation légère du badge panier.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+---
 
-### Deployment
+## 🚀 Installation
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Cloner le dépôt :
 
-### `npm run build` fails to minify
+```bash
+git clone https://github.com/ton-utilisateur/FoodieApp.git
+cd FoodieApp
+Installer les dépendances :
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+npm install
+
+
+Lancer le serveur backend (Node.js/Express) :
+
+node server.js
+
+
+Lancer l’application React :
+
+npm start
+
+🔧 Stack technique
+
+Frontend : React, Redux, React Router, Tailwind CSS
+
+Backend : Node.js, Express
+
+API externe : https://fakerestaurantapi.runasp.net/api/Restaurant
+
+Outils : React DevTools, Redux DevTools
+
